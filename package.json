@@ -1,6 +1,6 @@
 {
   "name": "prontbot",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "prontbot, L375's twitch bot",
   "main": "index.js",
   "dependencies": {
