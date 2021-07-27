@@ -1,0 +1,22 @@
+{
+  "name": "prontbot",
+  "version": "0.1.0",
+  "description": "prontbot, L375's twitch bot",
+  "main": "index.js",
+  "dependencies": {
+    "tmi.js": "^1.8.3"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "prontbot",
+    "L375",
+    "javascript",
+    "twitch",
+    "tmi.js"
+  ],
+  "author": "L375",
+  "license": "MIT"
+}
