@@ -6,7 +6,9 @@
 
 latest build: v0.1.0
 
-prontbot is a custom twitch bot that does things on my channel.  
-at this point, i'm not sure what and that's okay. i'll figure it out someday
+prontbot is a custom twitch bot that will do things on my channel.  
+(at this point, i'm not sure exactly what it'll do and that's okay. i'll figure it out someday)
 
-prontbot's license is tbd, but will likely be the MIT license or something similar
+prontbot is still in its early stages of development and is largely incomplete. use at your own risk!
+
+prontbot is currently licensed under the MIT license, but that is subject to change.
