@@ -1,7 +1,9 @@
-const tmi = require('tmi.js');
+// require tmi.js, the discord.js Collection class, and fs
+const TMI = require('tmi.js');
+const C = require('@discordjs/collection');
 const fs = require('fs');
 
-// Define configuration options
+// Define config options
 const config = {
   identity: {
     username: process.env.bot_username,
@@ -10,49 +12,59 @@ const config = {
   channels: [process.env.channel_name]
 };
 
-// Create a client with our options
-const client = new tmi.client(config);
-const commands = new Object();
+// Create the client
+const client = new TMI.client(config);
 
 // Load commands
+const commands = new C.Collection();
 const commandFiles = fs.readdirSync('./commands').filter(f => f.endsWith('.js'));
 for(const file of commandFiles) {
-  const command = require(`./commands/${file}`);
-  Object.defineProperty(commands, command.help.name, {
-    value: command,
-    writable: false
-  });
+  let cmd = require(`./commands/${file}`);
+  commands.set(cmd.info.name, cmd);
 }
 
-// triggers when a message comes in
+// [E] triggers when a message comes in
 client.on('message', (channel, ustate, msg, self) => {
   if(self || !msg.trim().startsWith(process.env.prefix)) return;
 
   // Trim whitespace + split off command and arguments
   const args = msg.trim().slice(process.env.prefix.length).split(/ +/);
-  const command = args.shift().toLowerCase();
+  const cmdX = args.shift().toLowerCase();
 
-  // todo: dynamic handler (similar to gyro but with arrays/objects?)
+  const command = commands.get(cmdX) || commands.find(cmd => cmd.info.aliases && cmd.info.aliases.includes(cmdX));
+
+  try {
+    command.run.execute(channel, ustate, msg, self, client);
+  } catch(e) {
+    console.log(e.stack);
+  }
+
+  if(process.env.exp === "0" && command.info.wip === 1) {
+    if(ustate.badges.broadcaster && ustate.badges.broadcaster === '1')
+      client.action(process.env.channel_name, "can't do that right now. feed them experimental ink then try again!");
+    else
+      client.action(process.env.channel_name, "can't do that right now.");
+  }
 });
 
-// triggers on login
+// [E] triggers on login
 client.on('connected', (addr, port) => {
-  console.log(`pronter go brrrr (connected to ${addr}:${port})`);
+  console.log(`pronter go brrrr - connected to ${addr}:${port}`);
 });
 
-// triggers on twitch ping
+// [E] triggers on twitch ping
 client.on('ping', () => {
   client.ping()
     .then(l => {
-      console.log(`[PING] current latency: ${l}sec`);
+      console.log(`[T:PING] current latency: ${l}sec`);
   }).catch(e => {
-      console.log(`[PING] error thrown: ${e}`);
+      console.log(`[T:PING] error thrown: ${e}`);
   });
 });
 
-// triggers on pong
+// [E] triggers on twitch pong
 client.on('pong', l => {
-  console.log(`[PONG] current latency: ${l}sec`);
+  console.log(`[T:PONG] current latency: ${l}sec`);
 })
 
 // Connect to Twitch
