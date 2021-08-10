@@ -6,10 +6,10 @@ const fs = require('fs');
 // Define config options
 const config = {
   identity: {
-    username: process.env.bot_username,
+    username: process.env.bot_user,
     password: process.env.oauth_token
   },
-  channels: [process.env.channel_name]
+  channels: [process.env.channel]
 };
 
 // Create the client
@@ -31,19 +31,23 @@ client.on('message', (channel, ustate, msg, self) => {
   const args = msg.trim().slice(process.env.prefix.length).split(/ +/);
   const cmdX = args.shift().toLowerCase();
 
+  // Find the command
   const command = commands.get(cmdX) || commands.find(cmd => cmd.info.aliases && cmd.info.aliases.includes(cmdX));
+  if(!command) return;
 
+  // Don't run any non-experimental commands when experimental mode is off
+  if(process.env.exp === "0" && command.info.wip === 1) {
+    if(ustate.badges.broadcaster && ustate.badges.broadcaster === '1')
+      return client.action(channel, "can't do that right now. feed them experimental ink then try again!");
+    else
+      return client.action(channel, "can't do that right now.");
+  }
+
+  // Run the command
   try {
     command.run.execute(channel, ustate, msg, self, client);
   } catch(e) {
-    console.log(e.stack);
-  }
-
-  if(process.env.exp === "0" && command.info.wip === 1) {
-    if(ustate.badges.broadcaster && ustate.badges.broadcaster === '1')
-      client.action(process.env.channel_name, "can't do that right now. feed them experimental ink then try again!");
-    else
-      client.action(process.env.channel_name, "can't do that right now.");
+    console.log(`${command.info.log} error thrown:\n${e.stack}`);
   }
 });
 
@@ -56,7 +60,7 @@ client.on('connected', (addr, port) => {
 client.on('ping', () => {
   client.ping()
     .then(l => {
-      console.log(`[T:PING] current latency: ${l}sec`);
+      console.log(`[T:PING] current latency: ${l*1000}ms`);
   }).catch(e => {
       console.log(`[T:PING] error thrown: ${e}`);
   });
@@ -64,7 +68,7 @@ client.on('ping', () => {
 
 // [E] triggers on twitch pong
 client.on('pong', l => {
-  console.log(`[T:PONG] current latency: ${l}sec`);
+  console.log(`[T:PONG] current latency: ${l*1000}ms`);
 })
 
 // Connect to Twitch

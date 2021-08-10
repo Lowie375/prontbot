@@ -1,7 +1,12 @@
 {
   "name": "prontbot",
-  "version": "0.1.0",
+  "version": "0.2.0-indev",
   "description": "prontbot, L375's twitch bot",
+  "homepage": "https://l375.weebly.com/prontbot",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lowie375/prontbot"
+  },
   "main": "index.js",
   "dependencies": {
     "@discordjs/collection": "^0.2.1",
