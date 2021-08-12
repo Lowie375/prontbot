@@ -10,8 +10,8 @@
 
 created by L375 for use on [twitch.tv/l375](https://twitch.tv/l375)
 
-latest stable build: v0.1.0  
-latest indev build: v0.2.0-indev
+latest stable build: v0.2.0  
+<!-- latest indev build: v0.2.0 -->
 
 ### clicky stuffs (links)
 

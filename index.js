@@ -1,7 +1,8 @@
-// require tmi.js, the discord.js Collection class, and fs
+// require tmi.js, the discord.js Collection class, fs, and colors
 const TMI = require('tmi.js');
 const C = require('@discordjs/collection');
 const fs = require('fs');
+const col = require('colors');
 
 // Define config options
 const config = {
@@ -12,15 +13,23 @@ const config = {
   channels: [process.env.channel]
 };
 
-// Create the client
+// Colour setup
+col.setTheme({
+  c: 'brightGreen',
+  t: 'brightMagenta',
+  n: 'white',
+});
+
+// Create the client + initialize client info
 const client = new TMI.client(config);
+client.up = Date.now();
+client.commands = new C.Collection();
 
 // Load commands
-const commands = new C.Collection();
 const commandFiles = fs.readdirSync('./commands').filter(f => f.endsWith('.js'));
 for(const file of commandFiles) {
   let cmd = require(`./commands/${file}`);
-  commands.set(cmd.info.name, cmd);
+  client.commands.set(cmd.info.name, cmd);
 }
 
 // [E] triggers when a message comes in
@@ -32,7 +41,7 @@ client.on('message', (channel, ustate, msg, self) => {
   const cmdX = args.shift().toLowerCase();
 
   // Find the command
-  const command = commands.get(cmdX) || commands.find(cmd => cmd.info.aliases && cmd.info.aliases.includes(cmdX));
+  const command = client.commands.get(cmdX) || client.commands.find(cmd => cmd.info.aliases && cmd.info.aliases.includes(cmdX));
   if(!command) return;
 
   // Don't run any non-experimental commands when experimental mode is off
@@ -45,7 +54,7 @@ client.on('message', (channel, ustate, msg, self) => {
 
   // Run the command
   try {
-    command.run.execute(channel, ustate, msg, self, client);
+    command.run.execute(channel, ustate, msg, client);
   } catch(e) {
     console.log(`${command.info.log} error thrown:\n${e.stack}`);
   }
@@ -53,14 +62,14 @@ client.on('message', (channel, ustate, msg, self) => {
 
 // [E] triggers on login
 client.on('connected', (addr, port) => {
-  console.log(`pronter go brrrr - connected to ${addr}:${port}`);
+  console.log(`[N:INDX] pronter go `.n + `brrrr`.bold.italic.n + ` - connected to ${addr}:${port}`.n);
 });
 
 // [E] triggers on twitch ping
 client.on('ping', () => {
   client.ping()
     .then(l => {
-      console.log(`[T:PING] current latency: ${l*1000}ms`);
+      console.log(`[T:PING] current latency: ${l*1000}ms`.t);
   }).catch(e => {
       console.log(`[T:PING] error thrown: ${e}`);
   });
@@ -68,7 +77,7 @@ client.on('ping', () => {
 
 // [E] triggers on twitch pong
 client.on('pong', l => {
-  console.log(`[T:PONG] current latency: ${l*1000}ms`);
+  console.log(`[T:PONG] current latency: ${l*1000}ms`.t);
 })
 
 // Connect to Twitch
