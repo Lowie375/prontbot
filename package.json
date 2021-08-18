@@ -12,7 +12,7 @@
     "@discordjs/collection": "^0.2.1",
     "bent": "^7.3.12",
     "colors": "^1.4.0",
-    "tmi.js": "^1.8.4"
+    "tmi.js": "^1.8.5"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
