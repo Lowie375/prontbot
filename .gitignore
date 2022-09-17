@@ -80,4 +80,4 @@ typings/
 
 # VSCode files
 *.code-workspace
-.vscode/*
+.vscode/
