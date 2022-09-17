@@ -3,7 +3,7 @@ const TMI = require('tmi.js');
 const C = require('@discordjs/collection');
 const fs = require('fs');
 const col = require('colors');
-
+require("dotenv").config()
 // Define config options
 const config = {
   identity: {
